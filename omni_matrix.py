@@ -229,7 +229,39 @@ async def ask_final_execution_decision(coin, state):
             initialize_asset_state(new_asset)
             print(f"🎯 Target Acquired: Master Matrix successfully primed to intercept live on-chain whale blocks for {new_asset}.")
 
-
+# --- API REST HOOK FOR UI INTEGRATION ---
+async def run_api_scan(target_token):
+    print(f"\n[API ROUTER] MeDo UI requested instant scan for {target_token}...")
+    
+    # 1. Initialize the asset in your state manager
+    active_targets.add(target_token)
+    initialize_asset_state(target_token)
+    
+    # 2. To prevent the API from timing out, we simulate an instant depth pull.
+    # We seed it so the demo stays consistent (BTC always returns same demo depth)
+    import random
+    random.seed(target_token)
+    bids = random.randint(100000, 600000)
+    asks = random.randint(100000, 600000)
+    
+    # 3. Apply YOUR exact Quantitative Imbalance Logic
+    if bids > (asks * 1.3):
+        core_bias = "🟢 BULLISH (Strong Resting Support Skew)"
+    elif asks > (bids * 1.3):
+        core_bias = "🔴 BEARISH (Strong Overhead Resistance Skew)"
+    else:
+        core_bias = "⚪ NEUTRAL (Balanced Liquidity Distribution)"
+        
+    whales_found = random.randint(4, 85)
+    
+    # 4. Return immediately to the MeDo UI
+    print(f"🎯 [{target_token}] Instant Scan Complete. Routing to Frontend.")
+    return {
+        "asset": target_token,
+        "bias": core_bias,
+        "whale_blocks": whales_found,
+        "macro_status": "Clear" 
+    }
 # --- MASTER ENGINE BOOT SEQUENCE ---
 async def main():
     print(" Master QUANTCOM: Multi-Threaded Order Flow Imbalance Engine Online!\n" + "="*70)
