@@ -48,7 +48,7 @@ async def live_order_book_syncer():
                     else:
                         # Real Binance API fetch for Crypto
                         symbol = f"{coin}USDT" if coin != "XRP" else "XRPUSDT"
-                        response = await client.get(f"https://api.binance.com/api/v3/depth?symbol={symbol}&limit=100")
+                        response = await client.get(f"https://data-api.binance.vision/api/v3/depth?symbol={symbol}&limit=100")
                         if response.status_code == 200:
                             depth = response.json()
                             total_bids = sum(float(bid[1]) for bid in depth.get("bids", []))
