@@ -1,4 +1,4 @@
-# Omni Matrix (QUANT-COM Engine)
+# (QUANT-COM Engine) (Beta)
 LINK: https://app-bobntlm0j9q9.appmedo.com/
 A high-performance, multi-threaded order flow imbalance engine built for the XRPL ledger. Designed to intercept massive on-chain whale sweeps and calculate resting depth liquidity biases in real-time.
 
@@ -17,3 +17,4 @@ A high-performance, multi-threaded order flow imbalance engine built for the XRP
 1. Clone the repository.
 2. Install dependencies: `pip install websockets`
 3. Run the engine: `python omni_matrix.py`
+Working on it !
