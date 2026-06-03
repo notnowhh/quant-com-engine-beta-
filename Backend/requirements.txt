@@ -1,6 +1,7 @@
 fastapi
 pydantic
-uvicorn
+uvicorn[standard]
+gunicorn
 websockets
 httpx
 feedparser
