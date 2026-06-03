@@ -1,0 +1,9 @@
+fastapi
+pydantic
+uvicorn
+websockets
+httpx
+feedparser
+python-dotenv
+yfinance
+alpaca-py
