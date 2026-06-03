@@ -31,7 +31,7 @@ app = FastAPI(title="OmniQuant V2.0 Engine - Institutional Edition")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://nice-sand-06aa39c00.7.azurestaticapps.net"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -640,4 +640,5 @@ async def deep_scan_endpoint(request: ScanRequest):
 
 
 if __name__ == "__main__":
-    uvicorn.run("omni_matrix:app", host="127.0.0.1", port=8000, reload=True)
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run("omni_matrix:app", host="0.0.0.0", port=port, reload=False)
