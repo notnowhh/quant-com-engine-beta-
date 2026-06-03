@@ -4,5 +4,6 @@ uvicorn
 websockets
 httpx
 feedparser
-erniebot
 python-dotenv
+yfinance
+alpaca-py
