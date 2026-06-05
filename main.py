@@ -67,6 +67,16 @@ class ATRRequest(BaseModel):
     ticker: str = "BTC"
 
 
+class FibCandle(BaseModel):
+    high: float
+    low: float
+    close: float
+
+
+class FibMapRequest(BaseModel):
+    candles: list[FibCandle]
+
+
 # ==========================================
 # ALPACA DATA HELPERS + SMC MATH ENGINE
 # ==========================================
@@ -415,6 +425,76 @@ async def get_live_chart(request: ChartRequest):
 
     except Exception as e:
         logger.error("Chart endpoint error: %s", e, exc_info=True)
+        return {"error": str(e)}
+
+
+# ==========================================
+# AUTO-FIBONACCI & LIQUIDITY MAPPING ENGINE
+# ==========================================
+@app.post("/api/fib-map")
+async def calculate_fib_map(request: FibMapRequest):
+    """
+    Receives an array of OHLC candles, locates the macro Swing High and Swing Low,
+    then computes key Fibonacci retracement levels including the Golden Pocket (0.618-0.786).
+    """
+    bars = request.candles
+    if len(bars) < 5:
+        return {"error": "Insufficient candle data -- need at least 5 bars"}
+
+    try:
+        # Use last 90 candles for macro-level swing detection
+        lookback = bars[-90:] if len(bars) > 90 else bars
+
+        swing_high_bar = max(lookback, key=lambda c: c.high)
+        swing_low_bar  = min(lookback, key=lambda c: c.low)
+
+        high_price = swing_high_bar.high
+        low_price  = swing_low_bar.low
+        wave_range = high_price - low_price
+
+        if wave_range <= 0:
+            return {"error": "Invalid price range -- high equals low"}
+
+        def fib_level(ratio: float) -> float:
+            return round(high_price - (wave_range * ratio), 8)
+
+        fib_0618 = fib_level(0.618)
+        fib_0786 = fib_level(0.786)
+        current_close = bars[-1].close
+        midpoint = fib_level(0.500)
+        zone_bias = "PREMIUM" if current_close > midpoint else "DISCOUNT"
+        gp_floor = min(fib_0618, fib_0786)
+        gp_ceiling = max(fib_0618, fib_0786)
+        in_golden_pocket = gp_floor <= current_close <= gp_ceiling
+
+        logger.info("Fib Map: high=%.6f low=%.6f bias=%s in_gp=%s", high_price, low_price, zone_bias, in_golden_pocket)
+
+        return {
+            "status": "success",
+            "swing_high": round(high_price, 6),
+            "swing_low":  round(low_price, 6),
+            "wave_range": round(wave_range, 6),
+            "current_close": round(current_close, 6),
+            "zone_bias": zone_bias,
+            "in_golden_pocket": in_golden_pocket,
+            "levels": {
+                "fib_0000": round(high_price, 6),
+                "fib_0236": round(fib_level(0.236), 6),
+                "fib_0382": round(fib_level(0.382), 6),
+                "fib_0500": round(midpoint, 6),
+                "fib_0618": round(fib_0618, 6),
+                "fib_0786": round(fib_0786, 6),
+                "fib_1000": round(low_price, 6),
+            },
+            "golden_pocket": {
+                "floor":   round(gp_floor, 6),
+                "ceiling": round(gp_ceiling, 6),
+                "label":   "Golden Pocket -- Institutional Trap Zone",
+            },
+        }
+
+    except Exception as e:
+        logger.error("Fib Map error: %s", e, exc_info=True)
         return {"error": str(e)}
 
 
