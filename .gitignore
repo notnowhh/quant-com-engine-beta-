@@ -1,2 +1,6 @@
 quant-com-ui/
 .env
+Backend/
+__pycache__/
+*.pyc
+*.pyo
