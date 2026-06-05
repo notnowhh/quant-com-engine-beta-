@@ -220,7 +220,10 @@ async def fetch_macro_news(request: NewsRequest):
     terminal_feed: list[dict] = []
     smc_data: dict = {"short_trap_zones": [], "long_trap_zones": [], "fair_value_gaps": []}
     ticker_upper = request.ticker.upper()
-    is_crypto = any(c in ticker_upper for c in ["BTC", "ETH", "SOL", "USDT"])
+    is_crypto = not any(fx in ticker_upper for fx in [
+        "USD", "EUR", "GBP", "JPY", "CHF", "AUD", "NZD", "CAD", "SGD", "MXN",
+        "XAU", "XAG", "XPT", "GC=", "SI=", "CL="
+    ])
 
     try:
         async with httpx.AsyncClient(timeout=8.0) as client:
@@ -270,7 +273,7 @@ async def fetch_macro_news(request: NewsRequest):
 
             if is_crypto:
                 # Crypto pipeline: UNCHANGED — daily candles from yfinance
-                smc_sym = "BTC-USD" if "BTC" in ticker_upper else "ETH-USD"
+                smc_sym = f"{ticker_upper.replace('USDT', '').replace('USD', '')}-USD"
                 raw = await asyncio.to_thread(
                     lambda: yf.Ticker(smc_sym).history(period="3mo", interval="1d")
                 )
@@ -337,7 +340,10 @@ async def fetch_macro_news(request: NewsRequest):
 async def calculate_dynamic_stop(request: ATRRequest):
     ticker_upper = request.ticker.upper().replace("/", "")
     logger.info("ATR engine: %s", ticker_upper)
-    is_crypto = any(c in ticker_upper for c in ["BTC", "ETH", "SOL", "USDT"])
+    is_crypto = not any(fx in ticker_upper for fx in [
+        "USD", "EUR", "GBP", "JPY", "CHF", "AUD", "NZD", "CAD", "SGD", "MXN",
+        "XAU", "XAG", "XPT", "GC=", "SI=", "CL="
+    ])
 
     try:
         true_ranges: list[float] = []
@@ -379,7 +385,10 @@ async def calculate_dynamic_stop(request: ATRRequest):
 @app.post("/api/chart")
 async def get_live_chart(request: ChartRequest):
     ticker = request.ticker.upper().replace("/", "")
-    is_crypto = any(c in ticker for c in ["BTC", "ETH", "SOL", "USDT"])
+    is_crypto = not any(fx in ticker for fx in [
+        "USD", "EUR", "GBP", "JPY", "CHF", "AUD", "NZD", "CAD", "SGD", "MXN",
+        "XAU", "XAG", "XPT", "GC=", "SI=", "CL="
+    ])
     candles: list[dict] = []
 
     smc_bars: list[dict] = []

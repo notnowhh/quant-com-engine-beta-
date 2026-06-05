@@ -1,0 +1,10 @@
+fastapi
+pydantic
+uvicorn[standard]
+gunicorn
+websockets
+httpx
+feedparser
+python-dotenv
+yfinance
+alpaca-py
