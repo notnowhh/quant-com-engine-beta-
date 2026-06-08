@@ -31,7 +31,7 @@ app = FastAPI(title="OmniQuant V2.0 Engine - Institutional Edition")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://nice-sand-06aa39c00.7.azurestaticapps.net"],
+    allow_origins=["https://quantcom.qzz.io", "https://nice-sand-06aa39c00.7.azurestaticapps.net"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
