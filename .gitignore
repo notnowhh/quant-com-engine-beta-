@@ -1,8 +1,5 @@
-# 1. Frontend Heavy Chunks (Crucial for saving quota!)
-Quant-com-ui/node_modules/
-Quant-com-ui/dist/
-Quant-com-ui/build/
-Quant-com-ui/package-lock.json
+# 1. Frontend UI folder (private repository)
+Quant-com-ui/
 
 # 2. Python Backend Caches
 __pycache__/
