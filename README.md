@@ -1,6 +1,6 @@
 # Quant-Com
 **Enterprise-Grade Real-Time Quantitative Trading Terminal**
-
+>>App Link: https://quantcom.qzz.io/
 ## 1. Project Overview & Architecture Blueprint
 QUANT-COM is a full-stack quantitative trading terminal that aggregates, normalizes, and processes market data across multiple asset classes (Crypto, Forex, and Real World Assets). 
 Built on an asynchronous FastAPI backend, the system feeds normalized price action into a decoupled, pure Python algorithmic engine that computes volume-weighted Smart Money Concepts (SMC) metrics. 
